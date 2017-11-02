@@ -20,12 +20,16 @@ function _M.cookieuid(self, cookie_key)
     end
     local cookieuid, err = cookie:get(cookie_key)
     if cookieuid then
+        ngx.header["uid"] = cookieuid
         return cookieuid
     end
 
-    local content_type = ngx.var.content_type
-    if not content_type or not string.find(content_type, "text") then
-        return "-"
+    local resp_headers = ngx.resp.get_headers()
+    if resp_headers then
+        local content_type = resp_headers['Content-Type']
+        if not content_type or not string.find(content_type, "text") then
+            return "-"
+        end
     end
 
     local uuid = require 'resty.jit-uuid'
@@ -33,6 +37,7 @@ function _M.cookieuid(self, cookie_key)
     cookie:set({
          key = cookie_key, value = cookieuid
     })
+    ngx.header["uid"] = cookieuid
     return cookieuid
 end
 
