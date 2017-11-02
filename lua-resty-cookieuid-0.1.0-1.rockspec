@@ -1,7 +1,7 @@
 package = "lua-resty-cookieuid"
 version = "0.1.0-1"
 source = {
-   url = "git@github.com:juggernaut0425/lua-resty-cookieuid.git"
+   url = "git://github.com/juggernaut0425/lua-resty-cookieuid.git"
 }
 description = {
    summary = "add UID if not exists"
