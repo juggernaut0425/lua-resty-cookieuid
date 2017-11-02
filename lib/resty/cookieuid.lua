@@ -11,17 +11,28 @@ function _M.seed(seed)
     uuid.seed(seed)
 end
 
-function _M.cookieuid()
+function _M.cookieuid(self, cookie_key)
     local ck = require "resty.cookie"
     local cookie = ck:new()
-    local cookieuid, err = cookie:get("COOKIEUID")
-    if not cookieuid then
-        local uuid = require 'resty.jit-uuid'
-        cookieuid = uuid()
-        cookie:set({
-             key = "COOKIEUID", value = cookieuid
-        })
+
+    if not cookie_key then
+        cookie_key = "COOKIEUID"
     end
+    local cookieuid, err = cookie:get(cookie_key)
+    if cookieuid then
+        return cookieuid
+    end
+
+    local content_type = ngx.var.content_type
+    if not content_type or not string.find(content_type, "text") then
+        return "-"
+    end
+
+    local uuid = require 'resty.jit-uuid'
+    cookieuid = uuid()
+    cookie:set({
+         key = cookie_key, value = cookieuid
+    })
     return cookieuid
 end
 
